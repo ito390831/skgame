@@ -20,7 +20,7 @@
   body{
     font-family:'Kosugi Maru',sans-serif;
     background:linear-gradient(160deg,#1e0a47 0%,#3a1f7a 40%,#5a2d9b 70%,#1a0838 100%);
-    min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;
+    height:100%;height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;
     padding:12px 12px 16px;position:relative;user-select:none;-webkit-user-select:none;
     transition:background .6s;
   }
@@ -89,7 +89,7 @@
   }
 
   /* ===== アリーナ ===== */
-  .arena{z-index:5;display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;flex:1;position:relative;}
+  .arena{z-index:5;display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;flex:1;min-height:0;position:relative;}
   .boxes{position:relative;}
   .box{
     position:absolute;left:0;top:0;border:none;background:none;cursor:pointer;padding:0;
@@ -180,6 +180,21 @@
   .banner.stage{background:rgba(0,0,0,.7);}
   .banner .sub{display:block;font-family:'Kosugi Maru',sans-serif;font-size:14px;margin-top:6px;color:rgba(255,255,255,.9);white-space:normal;}
   .banner .big-icon{display:block;font-size:56px;line-height:1.2;}
+  .ask{position:fixed;inset:0;z-index:160;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.55);padding:20px;}
+  .ask.show{display:flex;}
+  .ask-card{
+    background:rgba(10,0,30,.92);border:3px solid var(--gold);border-radius:24px;padding:20px 22px;text-align:center;color:#fff;
+    box-shadow:0 0 30px rgba(245,200,66,.6);max-width:92vw;animation:askIn .3s cubic-bezier(.175,.885,.32,1.275);
+  }
+  @keyframes askIn{from{transform:scale(.6);opacity:0;}to{transform:scale(1);opacity:1;}}
+  .ask-title{font-family:'Mochiy Pop One',sans-serif;font-size:26px;}
+  .ask-sub{font-size:13px;margin:8px 0 16px;color:rgba(255,255,255,.9);}
+  .ask-btns{display:flex;gap:10px;justify-content:center;}
+  .ask-btns button{
+    padding:12px 22px;border-radius:30px;font-family:'Mochiy Pop One',sans-serif;font-size:16px;cursor:pointer;-webkit-appearance:none;
+  }
+  .ask-yes{border:none;background:linear-gradient(135deg,var(--gold),#e89500);color:#1a1035;box-shadow:0 4px 14px rgba(245,200,66,.5);}
+  .ask-no{border:2px solid rgba(255,255,255,.5);background:rgba(255,255,255,.12);color:#fff;}
   .flash{position:fixed;inset:0;background:#fff;z-index:140;pointer-events:none;opacity:0;}
   .flash.on{animation:flash .5s ease-out;}
   @keyframes flash{0%{opacity:.95;}100%{opacity:0;}}
@@ -368,6 +383,16 @@
 <div class="flash" id="flash"></div>
 <div class="curtain" id="curtain"></div>
 <div class="banner" id="banner"></div>
+<div class="ask" id="askSlow">
+  <div class="ask-card">
+    <div class="ask-title" id="askTitle"></div>
+    <div class="ask-sub" id="askSub"></div>
+    <div class="ask-btns">
+      <button class="ask-yes" id="askYes" type="button"></button>
+      <button class="ask-no" id="askNo" type="button"></button>
+    </div>
+  </div>
+</div>
 
 <!-- スタート画面 -->
 <div class="start-screen" id="startScreen">
@@ -499,11 +524,15 @@ const TX = {
   i_slow:['スロー：入れかえがゆっくりになる','スロー：いれかえが ゆっくりに なる'],
   u_shield:['ハズレたときに自動で発動するよ','ハズレたときに じどうで はつどう するよ'],
   u_peek:['「宝はどれ？」のときに下のボタンをタップ','「たからは どれ？」の ときに したの ボタンを タップ'],
-  u_slow:['入れかえの前か「宝はどれ？」のときにタップ','いれかえの まえか 「たからは どれ？」の ときに タップ'],
+  u_slow:['シャッフルの前に「つかう？」と聞かれるよ','シャッフルの まえに 「つかう？」と きかれるよ'],
+  use_ask:['前に聞く','まえに きく'],
+  askSlow:['🐢 スローをつかう？','🐢 スローを つかう？'],
+  askSlowSub:['このシャッフルがゆっくりになるよ（のこり{0}こ）','この シャッフルが ゆっくりに なるよ（のこり {0}こ）'],
+  askYes:['つかう','つかう'], askNo:['つかわない','つかわない'],
+  itemFull:['アイテムはぜんぶ持ってるよ！','アイテムは ぜんぶ もってるよ！'],
   n_shield:['盾','たて'], n_peek:['のぞき見','のぞきみ'], n_slow:['スロー','スロー'], n_hint:['ヒント','ヒント'],
   use_auto:['自動','じどう'], use_tap:['タップ','タップ'],
   g_peek:['👀をタップすると宝が光るよ！','👀を タップすると たからが ひかるよ！'],
-  g_slow:['🐢をタップすると入れかえがゆっくりに！','🐢を タップすると いれかえが ゆっくりに！'],
   slowOn:['🐢 次の入れかえはゆっくり！','🐢 つぎの いれかえは ゆっくり！'],
   slowing:['🐢 ゆっくり中… よーく見て！','🐢 ゆっくり ちゅう… よーく みて！'],
   goalCount:['ゴール{0}回目！（プレイ{1}回）','ゴール {0}かいめ！（プレイ {1}かい）'],
@@ -933,8 +962,7 @@ function renderItems() {
   mk('shield', G.items.shield > 0, 'passive' + (G.items.shield > 0 ? ' on' : ''), 'use_auto');
   const peekOk = peekUsable();
   mk('peek', peekOk, peekOk ? 'ready' : '', 'use_tap');
-  const slowOk = slowUsable();
-  mk('slow', slowOk, G.slowNext ? 'on' : (slowOk ? 'ready' : ''), 'use_tap');
+  mk('slow', G.items.slow > 0, 'passive' + (G.items.slow > 0 ? ' on' : ''), 'use_ask');
   if (G.mode === 'easy') {
     const h = document.createElement('div');
     h.className = 'item passive';
@@ -943,12 +971,10 @@ function renderItems() {
   }
 }
 const peekUsable = () => G.items.peek > 0 && G.phase === 'choose';
-const slowUsable = () => G.items.slow > 0 && !G.slowNext && ['show', 'choose', 'reveal'].includes(G.phase);
 // メッセージ＋使えるアイテムの案内
 function guideMsg(base) {
   let s = base;
   if (peekUsable()) s += '\n' + t('g_peek');
-  else if (slowUsable()) s += '\n' + t('g_slow');
   const box = $('messageBox');
   box.textContent = '';
   s.split('\n').forEach((line, i) => {
@@ -1117,9 +1143,14 @@ async function startRound() {
   await sleep(G.mode === 'easy' ? 2000 : 1300); if (!alive(id)) return;
   tb.el.classList.remove('open'); soundClose();
   await sleep(550); if (!alive(id)) return;
+  let slow = false;
+  if (G.items.slow > 0) {
+    G.phase = 'ask'; renderItems();
+    slow = await askSlow();
+    if (!alive(id)) return;
+    if (slow) { G.items.slow--; soundItem(); }
+  }
   G.phase = 'shuffle'; renderItems();
-  const slow = G.slowNext;
-  G.slowNext = false;
   if (G.mode === 'easy') { msg(slow ? t('slowing') : t('carrying')); await easyShuffle(st, slow, id); }
   else await normalShuffle(st, slow, id);
   if (!alive(id)) return;
@@ -1192,11 +1223,17 @@ async function afterWin(id) {
   }
   if (G.round % 3 === 0) {
     await sleep(900); if (!alive(id)) return;
-    const it = pick(['shield', 'peek', 'slow']);
-    G.items[it]++;
-    renderItems();
-    soundItem();
-    await showBanner(`<span class="big-icon">${ITEM_ICON[it]}</span>${t('itemGet')}<span class="sub">${t('i_' + it)}<br>👉 ${t('u_' + it)}</span>`, '', 3000);
+    // 同じアイテムは1個まで：持っていないものから選ぶ
+    const cand = ['shield', 'peek', 'slow'].filter(k => G.items[k] === 0);
+    if (cand.length) {
+      const it = pick(cand);
+      G.items[it] = 1;
+      renderItems();
+      soundItem();
+      await showBanner(`<span class="big-icon">${ITEM_ICON[it]}</span>${t('itemGet')}<span class="sub">${t('i_' + it)}<br>👉 ${t('u_' + it)}</span>`, '', 3000);
+    } else {
+      await showBanner(`<span class="big-icon">🎒</span>${t('itemFull')}`, '', 1800);
+    }
     if (!alive(id)) return;
     await changeStage(stageOf(G.round), id);
   } else {
@@ -1231,14 +1268,24 @@ function useItem(key) {
     setTimeout(() => { if (G.phase === 'choose') el.classList.remove('glow'); }, 1500);
     renderItems();
     guideMsg(t('which'));
-  } else if (key === 'slow') {
-    if (!slowUsable()) return;
-    G.items.slow--;
-    G.slowNext = true;
-    soundItem();
-    renderItems();
-    msg(t('slowOn'));
   }
+  // 🐢スローはシャッフル前の確認画面でのみ使う
+}
+
+// 🐢スロー確認（つかう→true／つかわない→false）
+function askSlow() {
+  return new Promise(res => {
+    const box = $('askSlow');
+    $('askTitle').textContent = t('askSlow');
+    $('askSub').textContent = t('askSlowSub', G.items.slow);
+    $('askYes').textContent = t('askYes');
+    $('askNo').textContent = t('askNo');
+    const done = v => { box.classList.remove('show'); $('askYes').onclick = $('askNo').onclick = null; G.askResolve = null; res(v); };
+    $('askYes').onclick = () => done(true);
+    $('askNo').onclick = () => done(false);
+    G.askResolve = done;
+    box.classList.add('show');
+  });
 }
 
 // ===== みんなで =====
@@ -1446,6 +1493,7 @@ function goToStart() {
   resetOverlay();
   $('banner').classList.remove('show');
   $('curtain').classList.remove('on');
+  if (G.askResolve) G.askResolve(false);
   setScene('space');
   renderRules(); renderRecord();
   $('startScreen').classList.remove('hide');
