@@ -7,180 +7,150 @@
 <meta name="description" content="スマホのブラウザでそのまま遊べる、親子向けのミニゲーム3本。どれが当たり？／タップしろ！／スペースドッジ。">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Dela+Gothic+One&family=DM+Sans:wght@500&family=Noto+Sans+JP:wght@500&display=swap" rel="stylesheet">
 <style>
   :root{
-    /* 色：白・黒・灰と藍色1色だけ。色はゲーム画面に任せる */
-    --ink:#000000;
-    --paper:#ffffff;
-    --mist:#e2e2e2;
-    --graphite:#595959;
-    --indigo:#4d49fc;
+    /* 色：温かい灰色の地＋オレンジ1色。紫は網点模様だけ、黄色はタグだけ */
+    --pumice:#e2e2df;     /* ページの地 */
+    --limestone:#f7f6f2;  /* カード */
+    --obsidian:#070607;   /* 文字 */
+    --muted:#3c3a36;      /* 補足文字 */
+    --ember:#fc5000;      /* ボタン・数字カード */
+    --violet:#524ae9;     /* 網点模様のみ */
+    --sulfur:#f5f28e;     /* タグのみ */
+    --chalk:#ffffff;
 
-    --font:'Inter','Noto Sans JP',ui-sans-serif,system-ui,-apple-system,"Hiragino Sans","Segoe UI",Roboto,sans-serif;
+    --font:'DM Sans','Noto Sans JP',system-ui,sans-serif;
+    --h-font:'Dela Gothic One','Noto Sans JP',sans-serif;   /* 日本語の極太見出し */
+    --display:'Anton',sans-serif;                            /* 英字・数字の圧縮見出し */
 
-    /* 文字サイズ（スマホ基準。PCは下のメディアクエリで拡大） */
-    --t-caption:12px;
-    --t-body:16px;
-    --t-heading:22px;
-    --t-heading-lg:32px;
-    --t-display:40px;
-
-    --r-sm:8px;      /* タグ・枠線ボタン */
-    --r-card:16px;   /* カード */
-    --r-pill:50px;   /* 主要ボタン */
-    --shadow-xl:rgba(0,0,0,.1) 0 24px 70px 0;
-
-    --gutter:16px;
-    --section:64px;
-    --max:1200px;
+    --r-card:40px; --r-pill:800px;
+    --gutter:16px; --section:64px; --max:1280px;
+    --t-body:16px; --t-h2:32px; --t-h1:min(48px,8.4vw);
   }
-  @media (min-width:900px){
-    :root{--t-body:18px;--t-heading:24px;--t-heading-lg:56px;--t-display:72px;--gutter:32px;--section:120px;}
-  }
+  @media (min-width:900px){:root{--gutter:40px;--section:80px;--t-h2:56px;--t-h1:56px;}}
 
   *{margin:0;padding:0;box-sizing:border-box;}
   html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;}
-  body{
-    background:var(--paper);color:var(--ink);font-family:var(--font);font-size:var(--t-body);line-height:1.45;
-    letter-spacing:-.007em;font-feature-settings:"kern";-webkit-font-smoothing:antialiased;overflow-x:hidden;
-  }
-  img{display:block;max-width:100%;height:auto;}  /* width/height属性は比率の予約用。実際の高さは幅に合わせる */
+  body{background:var(--pumice);color:var(--obsidian);font-family:var(--font);font-weight:500;font-size:var(--t-body);line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden;}
+  img{display:block;max-width:100%;height:auto;}
   a{color:inherit;}
-  /* 日本語の改行：単語（文節）の途中で折らない */
   h1,h2,h3,p,li{word-break:keep-all;overflow-wrap:anywhere;line-break:strict;}
+  h1,h2,h3{font-family:var(--h-font);font-weight:400;letter-spacing:.02em;line-height:1.15;}
   .wrap{max-width:var(--max);margin:0 auto;padding:0 var(--gutter);}
 
-  /* ===== ボタン ===== */
-  .btn-primary{
-    display:inline-block;background:var(--indigo);color:#fff;text-decoration:none;font-weight:500;font-size:16px;
-    padding:12px 24px;border-radius:var(--r-pill);
-  }
-  .btn-pill-black{
-    display:inline-block;background:var(--ink);color:#fff;text-decoration:none;font-weight:500;font-size:15px;
-    padding:8px 18px;border-radius:var(--r-pill);
-  }
-  .btn-ghost{
-    display:inline-block;border:1px solid var(--ink);color:var(--ink);text-decoration:none;font-weight:400;font-size:16px;
-    padding:8px 18px;border-radius:var(--r-sm);
-  }
-  .btn-primary:focus-visible,.btn-pill-black:focus-visible,.btn-ghost:focus-visible{outline:2px solid var(--indigo);outline-offset:3px;}
-  @media (hover:hover){
-    .btn-ghost:hover{background:var(--ink);color:#fff;}
-    .btn-primary:hover{filter:brightness(1.08);}
-  }
+  /* ボタン（影なし・丸型） */
+  .btn{display:inline-block;background:var(--ember);color:var(--obsidian);text-decoration:none;font-size:16px;padding:12px 24px;border-radius:var(--r-pill);}
+  .ghost{display:inline-block;border:1.5px solid var(--obsidian);color:var(--obsidian);text-decoration:none;font-size:16px;padding:10px 20px;border-radius:var(--r-card);}
+  .btn:focus-visible,.ghost:focus-visible{outline:2px solid var(--violet);outline-offset:3px;}
+  @media (hover:hover){.btn:hover{filter:brightness(1.07);} .ghost:hover{background:var(--obsidian);color:var(--chalk);}}
 
-  /* ===== 上部バー ===== */
-  .nav{height:64px;display:flex;align-items:center;justify-content:space-between;}
-  .logo{font-weight:700;font-size:20px;letter-spacing:-.02em;text-decoration:none;}
+  /* 上部バー（丸いバーの中に収める） */
+  .nav{display:flex;align-items:center;justify-content:space-between;background:var(--limestone);border-radius:var(--r-pill);height:56px;padding:0 10px 0 22px;margin-top:12px;}
+  .logo{font-family:var(--display);font-size:26px;letter-spacing:.02em;text-decoration:none;}
+  .nav .btn{padding:8px 18px;font-size:15px;}
 
-  /* ===== ヒーロー ===== */
-  .hero{position:relative;padding:24px 0 var(--section);overflow:hidden;overflow:clip;}  /* 傾けた画像が横にはみ出してスクロールしないように */
-  .collage{position:relative;height:520px;max-width:1100px;margin:0 auto;}
-  .collage img{
-    position:absolute;width:150px;height:auto;box-shadow:0 2px 10px rgba(0,0,0,.12);
-  }
-  .collage img:nth-child(1){left:-4%;top:10px;transform:rotate(-8deg);border-radius:14px;}
-  .collage img:nth-child(2){left:26%;top:-10px;transform:rotate(5deg);border-radius:10px;}
-  .collage img:nth-child(3){right:-4%;top:30px;transform:rotate(9deg);border-radius:18px;}
-  .collage img:nth-child(4){left:4%;top:260px;transform:rotate(6deg);border-radius:12px;}
-  .collage img:nth-child(5){left:40%;top:280px;transform:rotate(-4deg);border-radius:16px;}
-  .collage img:nth-child(6){right:2%;top:270px;transform:rotate(-9deg);border-radius:8px;}
-  .hero-card{
-    position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:calc(100% - 2 * var(--gutter));max-width:560px;
-    background:var(--paper);border-radius:var(--r-card);padding:24px;box-shadow:var(--shadow-xl);
-  }
-  /* 見出しは各行を折らず、カード幅に収まる大きさにする（1行あたり約9.4文字） */
-  .hero-card h1{font-size:min(var(--t-display),calc((100vw - 2 * var(--gutter) - 48px) / 9.4));font-weight:300;line-height:1.15;letter-spacing:-.02em;}
-  .hero-card h1 span{display:block;white-space:nowrap;}
-  .hero-card p{color:var(--graphite);margin:16px 0 24px;font-size:var(--t-body);line-height:1.5;}
-  @media (min-width:900px){
-    .collage{height:640px;}
-    .collage img{width:220px;}
-    .collage img:nth-child(1){left:2%;top:20px;}
-    .collage img:nth-child(2){left:22%;top:-20px;}
-    .collage img:nth-child(3){right:4%;top:0;}
-    .collage img:nth-child(4){left:0;top:330px;}
-    .collage img:nth-child(5){left:auto;right:22%;top:300px;}
-    .collage img:nth-child(6){right:-2%;top:340px;}
-    .hero-card{padding:40px;max-width:620px;}
-    .hero-card h1{font-size:56px;}
-  }
+  /* ヒーロー */
+  .hero{padding:24px 0 var(--section);}
+  .play{font-family:var(--display);font-size:min(189px,31vw);line-height:.94;letter-spacing:.02em;}
+  .hero h1{font-size:var(--t-h1);margin:12px 0 16px;}
+  .hero h1 span{display:block;white-space:nowrap;}
+  .hero p{max-width:520px;margin-bottom:24px;}
+  .hero-grid{display:grid;grid-template-columns:1fr;gap:16px;margin-top:32px;}
+  @media (min-width:900px){.hero-grid{grid-template-columns:1.4fr 1fr;}}
+  /* 網点模様：紫からオレンジへのグラデーションの上に、オレンジの点 */
+  .halftone{border-radius:var(--r-card);min-height:300px;position:relative;overflow:hidden;
+    background:radial-gradient(circle,var(--ember) 38%,transparent 40%) 0 0/9px 9px,linear-gradient(160deg,var(--violet) 10%,#7a3fd0 45%,var(--ember) 100%);}
+  @media (min-width:900px){.halftone{min-height:380px;}}
+  .halftone img{position:absolute;bottom:-30px;width:42%;max-width:230px;border-radius:24px;}
+  .halftone img:nth-child(1){left:6%;transform:rotate(-6deg);}
+  .halftone img:nth-child(2){left:30%;bottom:-60px;transform:rotate(3deg);}
+  .halftone img:nth-child(3){left:54%;transform:rotate(8deg);}
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+  @media (min-width:900px){.stats{grid-template-columns:1fr;}}
+  .stat{background:var(--ember);color:var(--chalk);border-radius:var(--r-card);padding:20px 16px;}
+  .stat span{font-size:13px;}
+  .stat b{display:block;font-family:var(--display);font-weight:400;font-size:min(64px,7.4vw);line-height:1.05;letter-spacing:.02em;white-space:nowrap;}
+  @media (min-width:900px){.stat{padding:28px 32px;} .stat b{font-size:56px;}}
 
-  /* ===== セクション共通 ===== */
+  /* セクション共通 */
   section{padding:var(--section) 0;}
-  .sec-title{font-size:var(--t-heading-lg);font-weight:300;line-height:1.1;letter-spacing:-.015em;margin-bottom:32px;}
-  .muted{color:var(--graphite);}
+  .sec-title{font-size:var(--t-h2);margin-bottom:32px;}
+  .dotted{border:0;border-top:1.5px dotted var(--obsidian);}
 
-  /* ===== ゲーム一覧 ===== */
-  .grid{display:grid;grid-template-columns:1fr;gap:40px;}
-  @media (min-width:700px){.grid{grid-template-columns:repeat(3,1fr);gap:24px;}}
-  .card{background:var(--paper);border-radius:var(--r-card);}
-  .card .thumb{display:block;border-radius:var(--r-card);overflow:hidden;background:var(--mist);aspect-ratio:4/3;}
+  /* ゲーム一覧 */
+  .grid{display:grid;grid-template-columns:1fr;gap:16px;}
+  @media (min-width:700px){.grid{grid-template-columns:repeat(3,1fr);}}
+  .card{background:var(--limestone);border-radius:var(--r-card);padding:24px;}
+  @media (min-width:900px){.card{padding:32px;}}
+  .card .thumb{display:block;border-radius:24px;overflow:hidden;aspect-ratio:4/3;background:var(--pumice);}
   @media (min-width:700px){.card .thumb{aspect-ratio:3/4;}}
   .card .thumb img{width:100%;height:100%;object-fit:cover;object-position:top;}
-  .card h3{font-size:18px;font-weight:500;margin:16px 0 4px;}
-  .card p{font-size:16px;color:var(--graphite);margin-bottom:12px;}
-  .tag{display:inline-block;font-size:12px;letter-spacing:.03em;border:1px solid var(--ink);border-radius:var(--r-sm);padding:2px 8px;margin-bottom:12px;}
-  .card-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+  .card h3{font-size:26px;margin:20px 0 8px;}
+  .tag{display:inline-block;font-size:13px;background:var(--sulfur);border-radius:var(--r-pill);padding:3px 10px;}
+  .card p{color:var(--muted);margin:10px 0 16px;}
+  .card-actions{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+  .more{font-size:15px;}
 
-  /* ===== ゲーム紹介 ===== */
+  /* 各ゲームの紹介 */
   .feature{display:grid;grid-template-columns:1fr;gap:32px;align-items:center;}
-  @media (min-width:900px){
-    .feature{grid-template-columns:1fr 1fr;gap:64px;}
-    .feature.flip .shots{order:2;}
-  }
-  .shots{display:flex;gap:12px;justify-content:center;align-items:flex-start;}
-  .shots img{width:40%;max-width:170px;border-radius:var(--r-card);}
-  .shots img + img{margin-top:32px;}
-  @media (min-width:900px){.shots img{width:48%;max-width:260px;} .shots img + img{margin-top:40px;}}
-  .feature h2{font-size:var(--t-heading-lg);font-weight:300;line-height:1.1;letter-spacing:-.015em;}
-  .feature .lead{font-size:var(--t-heading);font-weight:400;margin:12px 0 20px;line-height:1.35;}
+  @media (min-width:900px){.feature{grid-template-columns:1fr 1fr;gap:64px;} .feature.flip .shots{order:2;}}
+  .shots{display:flex;gap:12px;justify-content:center;align-items:flex-start;background:var(--limestone);border-radius:var(--r-card);padding:24px 20px 0;overflow:hidden;max-height:460px;}
+  @media (min-width:900px){.shots{max-height:600px;padding:32px 28px 0;}}
+  .shots img{width:44%;max-width:240px;border-radius:24px;}
+  .shots img+img{margin-top:40px;}
+  .feature h2{font-size:var(--t-h2);}
+  .lead{font-size:20px;margin:12px 0 20px;}
   .points{list-style:none;margin-bottom:20px;}
-  .points li{padding:10px 0;border-top:1px solid var(--mist);}
-  .points li:last-child{border-bottom:1px solid var(--mist);}
+  .points li{padding:12px 0;border-top:1.5px dotted var(--obsidian);}
+  .points li:last-child{border-bottom:1.5px dotted var(--obsidian);}
   .modes{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px;}
-  .mode{font-size:16px;background:var(--mist);border-radius:var(--r-sm);padding:6px 12px;}
-  .mode b{font-weight:500;}
-  .divider{border:0;border-top:1px solid var(--mist);}
+  .mode{font-size:15px;background:var(--limestone);border-radius:var(--r-pill);padding:6px 14px;}
+  .mode b{font-weight:500;color:var(--ember);}
 
-  /* ===== 共通の特徴 ===== */
-  .panel{background:var(--mist);border-radius:var(--r-card);padding:24px;}
+  /* 共通の特徴（黒いパネル） */
+  .panel{background:var(--obsidian);color:var(--chalk);border-radius:var(--r-card);padding:28px 24px;}
   @media (min-width:900px){.panel{padding:48px;}}
-  .feats{display:grid;grid-template-columns:1fr;gap:24px;}
+  .feats{display:grid;grid-template-columns:1fr;gap:28px;}
   @media (min-width:600px){.feats{grid-template-columns:repeat(2,1fr);}}
   @media (min-width:1000px){.feats{grid-template-columns:repeat(4,1fr);}}
-  .feat svg{width:28px;height:28px;stroke:var(--ink);fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;margin-bottom:12px;}
-  .feat h3{font-size:18px;font-weight:500;margin-bottom:4px;}
-  .feat p{font-size:16px;color:var(--graphite);}
+  .feat svg{width:30px;height:30px;stroke:var(--ember);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;margin-bottom:12px;}
+  .feat h3{font-size:22px;margin-bottom:6px;}
+  .feat p{color:#cfcfca;}
 
-  /* ===== フッター ===== */
   footer{padding:40px 0 calc(40px + env(safe-area-inset-bottom));}
-  footer p{font-size:12px;color:var(--graphite);letter-spacing:.03em;}
+  footer p{font-size:12px;color:var(--muted);}
 </style>
 </head>
 <body>
 
-<header class="wrap nav">
-  <a class="logo" href="./">skgame</a>
-  <a class="btn-pill-black" href="#games">遊ぶ</a>
+<header class="wrap">
+  <nav class="nav">
+    <a class="logo" href="./">skgame</a>
+    <a class="btn" href="#games">遊ぶ</a>
+  </nav>
 </header>
 
 <main>
-  <!-- ヒーロー：ゲーム画面のコラージュ＋浮かぶカード -->
+  <!-- ヒーロー -->
   <div class="hero">
-    <div class="collage" aria-hidden="true">
-      <img src="img/tr-play.webp" alt="" width="560" height="1212">
-      <img src="img/tap-fever.webp" alt="" width="560" height="1212">
-      <img src="img/sd-mars.webp" alt="" width="560" height="1212">
-      <img src="img/sd-shower.webp" alt="" width="560" height="1212">
-      <img src="img/tr-goal.webp" alt="" width="560" height="1212">
-      <img src="img/tap-play.webp" alt="" width="560" height="1212">
-    </div>
-    <div class="hero-card">
+    <div class="wrap">
+      <div class="play" aria-hidden="true">PLAY.</div>
       <h1><span>親子で遊べる、</span><span>3つのミニゲーム。</span></h1>
       <p>スマホのブラウザでそのまま遊べます。ダウンロードもログインもいりません。</p>
-      <a class="btn-primary" href="#games">さっそく遊ぶ</a>
+      <a class="btn" href="#games">さっそく遊ぶ</a>
+      <div class="hero-grid">
+        <div class="halftone" aria-hidden="true">
+          <img src="img/tr-play.webp" alt="" width="560" height="1212">
+          <img src="img/tap-fever.webp" alt="" width="560" height="1212">
+          <img src="img/sd-mars.webp" alt="" width="560" height="1212">
+        </div>
+        <div class="stats">
+          <div class="stat"><span>ゲーム</span><b>3本</b></div>
+          <div class="stat"><span>料金</span><b>0円</b></div>
+          <div class="stat"><span>1プレイ</span><b>30秒〜</b></div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -194,29 +164,29 @@
           <h3>どれが当たり？</h3>
           <span class="tag">よく見る</span>
           <p>宝を入れた箱がシャッフル。目で追って、当たりの箱を当てよう。</p>
-          <div class="card-actions"><a class="btn-ghost" href="treasure_game.html">遊ぶ →</a><a class="muted" href="#treasure">くわしく</a></div>
+          <div class="card-actions"><a class="ghost" href="treasure_game.html">遊ぶ →</a><a class="more" href="#treasure">くわしく</a></div>
         </article>
         <article class="card">
           <a class="thumb" href="tap_game.html"><img src="img/tap-play.webp" alt="タップしろ！のプレイ画面" width="560" height="1212" loading="lazy"></a>
           <h3>タップしろ！</h3>
           <span class="tag">反射神経</span>
           <p>流れてくるキャラの中から、正解だけをすばやくタップ。</p>
-          <div class="card-actions"><a class="btn-ghost" href="tap_game.html">遊ぶ →</a><a class="muted" href="#tap">くわしく</a></div>
+          <div class="card-actions"><a class="ghost" href="tap_game.html">遊ぶ →</a><a class="more" href="#tap">くわしく</a></div>
         </article>
         <article class="card">
           <a class="thumb" href="space_dodge.html"><img src="img/sd-mars.webp" alt="スペースドッジのプレイ画面" width="560" height="1212" loading="lazy"></a>
           <h3>スペースドッジ</h3>
           <span class="tag">よける</span>
           <p>ロケットを動かして、飛んでくるキャラをよけながら宇宙を旅しよう。</p>
-          <div class="card-actions"><a class="btn-ghost" href="space_dodge.html">遊ぶ →</a><a class="muted" href="#space">くわしく</a></div>
+          <div class="card-actions"><a class="ghost" href="space_dodge.html">遊ぶ →</a><a class="more" href="#space">くわしく</a></div>
         </article>
       </div>
     </div>
   </section>
 
-  <hr class="divider">
+  <div class="wrap"><hr class="dotted"></div>
 
-  <!-- ゲーム紹介 -->
+  <!-- 各ゲームの紹介 -->
   <section id="treasure">
     <div class="wrap feature">
       <div class="shots">
@@ -236,7 +206,7 @@
           <span class="mode"><b>ノーマル</b> シャッフル・たまに超高速</span>
           <span class="mode"><b>みんなで</b> 2〜4人で順番に</span>
         </div>
-        <a class="btn-ghost" href="treasure_game.html">遊ぶ →</a>
+        <a class="ghost" href="treasure_game.html">遊ぶ →</a>
       </div>
     </div>
   </section>
@@ -259,7 +229,7 @@
           <span class="mode"><b>イージー</b> ゆっくり・キャラ大きめ</span>
           <span class="mode"><b>ノーマル</b> 動くキャラとニセモノに注意</span>
         </div>
-        <a class="btn-ghost" href="tap_game.html">遊ぶ →</a>
+        <a class="ghost" href="tap_game.html">遊ぶ →</a>
       </div>
     </div>
   </section>
@@ -282,7 +252,7 @@
           <span class="mode"><b>イージー</b> 敵少なめ・バリア付き</span>
           <span class="mode"><b>ノーマル</b> どこまで行けるか勝負</span>
         </div>
-        <a class="btn-ghost" href="space_dodge.html">遊ぶ →</a>
+        <a class="ghost" href="space_dodge.html">遊ぶ →</a>
       </div>
     </div>
   </section>
