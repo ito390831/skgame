@@ -155,7 +155,7 @@
     -webkit-appearance:none;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2px 6px;
     font-family:'Kosugi Maru',sans-serif;line-height:1.15;
   }
-  .item .ic{font-size:17px;}
+  .item .ic{font-size:20px;}
   .item .lbl{font-size:10px;font-weight:400;white-space:nowrap;margin-top:2px;}
   .item .lbl b{display:inline-block;margin-left:3px;padding:0 4px;border-radius:6px;background:rgba(255,255,255,.2);font-weight:700;}
   .item:disabled{opacity:.35;cursor:default;}
@@ -529,6 +529,7 @@ const TX = {
   askSlow:['🐢 スローをつかう？','🐢 スローを つかう？'],
   askSlowSub:['このシャッフルがゆっくりになるよ（のこり{0}こ）','この シャッフルが ゆっくりに なるよ（のこり {0}こ）'],
   askYes:['つかう','つかう'], askNo:['つかわない','つかわない'],
+  ready:['よーく見てね…','よーく みてね…'],
   itemFull:['アイテムはぜんぶ持ってるよ！','アイテムは ぜんぶ もってるよ！'],
   n_shield:['盾','たて'], n_peek:['のぞき見','のぞきみ'], n_slow:['スロー','スロー'], n_hint:['ヒント','ヒント'],
   use_auto:['自動','じどう'], use_tap:['タップ','タップ'],
@@ -945,7 +946,7 @@ function renderItems() {
     b.type = 'button';
     const ic = document.createElement('span');
     ic.className = 'ic';
-    ic.textContent = `${ITEM_ICON[key]}×${G.items[key]}`;
+    ic.textContent = ITEM_ICON[key];   // 各1個までなので数は出さない
     const lbl = document.createElement('span');
     lbl.className = 'lbl';
     lbl.textContent = t('n_' + key);
@@ -961,7 +962,8 @@ function renderItems() {
   };
   mk('shield', G.items.shield > 0, 'passive' + (G.items.shield > 0 ? ' on' : ''), 'use_auto');
   const peekOk = peekUsable();
-  mk('peek', peekOk, peekOk ? 'ready' : '', 'use_tap');
+  // 持っている＝緑、今タップできる＝金色で点滅、持っていない＝薄く
+  mk('peek', G.items.peek > 0, peekOk ? 'ready' : (G.items.peek > 0 ? 'on' : ''), 'use_tap');
   mk('slow', G.items.slow > 0, 'passive' + (G.items.slow > 0 ? ' on' : ''), 'use_ask');
   if (G.mode === 'easy') {
     const h = document.createElement('div');
@@ -1149,6 +1151,10 @@ async function startRound() {
     slow = await askSlow();
     if (!alive(id)) return;
     if (slow) { G.items.slow--; soundItem(); }
+    renderItems();
+    // 確認画面を閉じてすぐ動き出すと見づらいので、ひと呼吸おく
+    msg(t('ready'));
+    await sleep(1200); if (!alive(id)) return;
   }
   G.phase = 'shuffle'; renderItems();
   if (G.mode === 'easy') { msg(slow ? t('slowing') : t('carrying')); await easyShuffle(st, slow, id); }
