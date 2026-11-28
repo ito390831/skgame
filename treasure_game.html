@@ -108,6 +108,15 @@
     transition:transform .45s cubic-bezier(.2,1.6,.4,1),opacity .2s;
   }
   .box .content img{width:100%;display:block;filter:drop-shadow(0 4px 6px rgba(0,0,0,.5));}
+  /* 👀のぞき見：箱が透けて中身が見える */
+  .box.xray .chest{opacity:.28;transition:opacity .25s;}
+  .box.xray .content{opacity:.95;transform:translateY(52%) scale(.62);transition:transform .25s,opacity .25s;}
+  .box.xray .chest::after{
+    content:'';position:absolute;inset:0;border-radius:10px;
+    background:linear-gradient(115deg,transparent 30%,rgba(160,230,255,.7) 50%,transparent 70%);
+    background-size:250% 100%;animation:xscan 1s linear infinite;
+  }
+  @keyframes xscan{from{background-position:120% 0;}to{background-position:-120% 0;}}
   .box.peekfx::after{
     content:'✨';position:absolute;left:50%;top:-30%;transform:translateX(-50%);font-size:28px;z-index:5;
     animation:sparkle .5s ease-in-out infinite alternate;pointer-events:none;
@@ -512,6 +521,7 @@ const TX = {
   watch:['宝の箱をよく見てね！','たからの はこを よく みてね！'],
   shuffling:['よーく見て！','よーく みて！'],
   carrying:['りすが箱をはこぶよ…','りすが はこを はこぶよ…'],
+  turtleCarry:['🐢 かめがゆっくりはこぶよ… よーく見て！','🐢 かめが ゆっくり はこぶよ… よーく みて！'],
   which:['宝はどれ？タップ！','たからは どれ？ タップ！'],
   opening:['ドキドキ…','ドキドキ…'],
   safe:['セーフ！','セーフ！'],
@@ -520,7 +530,7 @@ const TX = {
   superFast:['⚡ 超高速！ ⚡','⚡ ちょうこうそく！ ⚡'],
   itemGet:['アイテムゲット！','アイテム ゲット！'],
   i_shield:['盾：ハズレても1回だけやり直せる','たて：ハズレても 1かいだけ やりなおせる'],
-  i_peek:['のぞき見：宝の箱が光る','のぞきみ：たからの はこが ひかる'],
+  i_peek:['のぞき見：箱が透けて中身が見える','のぞきみ：はこが すけて なかみが みえる'],
   i_slow:['スロー：入れかえがゆっくりになる','スロー：いれかえが ゆっくりに なる'],
   u_shield:['ハズレたときに自動で発動するよ','ハズレたときに じどうで はつどう するよ'],
   u_peek:['「宝はどれ？」のときに下のボタンをタップ','「たからは どれ？」の ときに したの ボタンを タップ'],
@@ -533,7 +543,7 @@ const TX = {
   itemFull:['アイテムはぜんぶ持ってるよ！','アイテムは ぜんぶ もってるよ！'],
   n_shield:['盾','たて'], n_peek:['のぞき見','のぞきみ'], n_slow:['スロー','スロー'], n_hint:['ヒント','ヒント'],
   use_auto:['自動','じどう'], use_tap:['タップ','タップ'],
-  g_peek:['👀をタップすると宝が光るよ！','👀を タップすると たからが ひかるよ！'],
+  g_peek:['👀をタップすると箱が透けて見えるよ！','👀を タップすると はこが すけて みえるよ！'],
   slowOn:['🐢 次の入れかえはゆっくり！','🐢 つぎの いれかえは ゆっくり！'],
   slowing:['🐢 ゆっくり中… よーく見て！','🐢 ゆっくり ちゅう… よーく みて！'],
   goalCount:['ゴール{0}回目！（プレイ{1}回）','ゴール {0}かいめ！（プレイ {1}かい）'],
@@ -684,6 +694,20 @@ const CHEST_SVG = `<svg viewBox="0 0 140 140" xmlns="http://www.w3.org/2000/svg"
   </g>
 </svg>`;
 
+const TURTLE_SVG = `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <path d="M14 76 L4 80 L14 82 Z" fill="#8fd16a" stroke="#3b6b22" stroke-width="2.5" stroke-linejoin="round"/>
+  <ellipse cx="30" cy="88" rx="9" ry="6" fill="#8fd16a" stroke="#3b6b22" stroke-width="2.5"/>
+  <ellipse cx="66" cy="88" rx="9" ry="6" fill="#8fd16a" stroke="#3b6b22" stroke-width="2.5"/>
+  <circle cx="86" cy="64" r="12" fill="#8fd16a" stroke="#3b6b22" stroke-width="3"/>
+  <circle cx="90" cy="61" r="3" fill="#1d2a10"/><circle cx="91" cy="60" r="1" fill="#fff"/>
+  <path d="M87 70 Q92 73 96 69" fill="none" stroke="#3b6b22" stroke-width="2" stroke-linecap="round"/>
+  <ellipse cx="84" cy="69" rx="3" ry="2" fill="#ff9aa8" opacity=".8"/>
+  <path d="M12 80 Q14 40 46 36 Q78 40 80 80 Z" fill="#4e9a3a" stroke="#2f5f1f" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M46 44 L58 52 L54 66 L38 66 L34 52 Z" fill="#6cba52" stroke="#2f5f1f" stroke-width="2"/>
+  <path d="M34 52 L20 60 M58 52 L72 60 M38 66 L30 78 M54 66 L62 78 M46 44 L46 37" stroke="#2f5f1f" stroke-width="2"/>
+  <rect x="10" y="76" width="72" height="8" rx="4" fill="#d9b45a" stroke="#8a6a1f" stroke-width="2"/>
+</svg>`;
+
 const SQUIRREL_SVG = `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
   <path d="M34 82 C2 78 -4 30 22 20 C42 13 50 36 36 44 C27 50 30 64 42 68 Z" fill="#c97b3a" stroke="#6b3a12" stroke-width="3"/>
   <path d="M20 30 C28 26 36 30 34 38" fill="none" stroke="#e8a868" stroke-width="3" stroke-linecap="round"/>
@@ -823,10 +847,12 @@ async function easyShuffle(st, slow, id) {
   sqSet(sq, -sw - 10, startY);
   sq.style.display = 'block';
   const carry = slow ? EASY_CARRY_MS * 1.6 : EASY_CARRY_MS;
+  const walk = slow ? 1050 : 650;           // 🐢使用時は亀がゆっくり歩く
+  sq.querySelector('.flip').innerHTML = slow ? TURTLE_SVG : SQUIRREL_SVG;
   const times = EASY_SWAPS[st];
   for (let i = 0; i < times; i++) {
     const [a, b] = randomPair();
-    await sqMove(sq, a.x + (bw - sw) / 2, a.y + offY, 650);
+    await sqMove(sq, a.x + (bw - sw) / 2, a.y + offY, walk);
     if (!alive(id)) return;
     await sleep(150);
     // a を持ち上げて b の位置へ、b は a の位置へすべる
@@ -858,7 +884,7 @@ async function easyShuffle(st, slow, id) {
     await sleep(200);
   }
   const W = parseFloat($('boxes').style.width);
-  await sqMove(sq, W + 10, sqPos(sq).y, 600);
+  await sqMove(sq, W + 10, sqPos(sq).y, slow ? 960 : 600);
   sq.style.display = 'none';
 }
 async function normalShuffle(st, slow, id) {
@@ -968,7 +994,7 @@ function renderItems() {
   if (G.mode === 'easy') {
     const h = document.createElement('div');
     h.className = 'item passive';
-    h.innerHTML = `<span class="ic">💡×${G.hints}</span><span class="lbl">${t('n_hint')}<b>${t('use_auto')}</b></span>`;
+    h.innerHTML = `<span class="ic">💡</span><span class="lbl">${t('n_hint')}<b>${t('use_auto')}</b></span>`;
     bar.appendChild(h);
   }
 }
@@ -1157,18 +1183,17 @@ async function startRound() {
     await sleep(1200); if (!alive(id)) return;
   }
   G.phase = 'shuffle'; renderItems();
-  if (G.mode === 'easy') { msg(slow ? t('slowing') : t('carrying')); await easyShuffle(st, slow, id); }
+  if (G.mode === 'easy') { msg(slow ? t('turtleCarry') : t('carrying')); await easyShuffle(st, slow, id); }
   else await normalShuffle(st, slow, id);
   if (!alive(id)) return;
   G.busy = false;
   G.phase = 'choose';
   renderItems();
   guideMsg(t('which'));
-  if (G.mode === 'easy' && G.hints > 0) {
+  if (G.mode === 'easy') {   // イージー：毎ラウンド3秒迷うと当たりが光る（回数制限なし）
     clearTimeout(G.hintTimer);
     G.hintTimer = setTimeout(() => {
-      if (!alive(id) || G.phase !== 'choose' || G.hints <= 0) return;
-      G.hints--;
+      if (!alive(id) || G.phase !== 'choose') return;
       G.treasure.el.classList.add('glow');
       renderItems();
     }, HINT_DELAY);
@@ -1268,10 +1293,12 @@ function useItem(key) {
     if (G.items.peek <= 0 || G.phase !== 'choose') return;
     G.items.peek--;
     soundItem();
-    const el = G.treasure.el;
-    el.classList.add('glow', 'peekfx');
-    setTimeout(() => el.classList.remove('peekfx'), 1500);
-    setTimeout(() => { if (G.phase === 'choose') el.classList.remove('glow'); }, 1500);
+    const id = G.gid;
+    G.boxes.forEach(b => b.el.classList.add('xray'));
+    setTimeout(() => {
+      if (!alive(id)) return;
+      G.boxes.forEach(b => b.el.classList.remove('xray'));
+    }, 1500);
     renderItems();
     guideMsg(t('which'));
   }
