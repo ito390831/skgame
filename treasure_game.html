@@ -178,7 +178,7 @@
   /* バナー・フラッシュ */
   .banner{
     position:fixed;left:50%;top:42%;z-index:150;pointer-events:none;text-align:center;
-    font-family:'Mochiy Pop One',sans-serif;font-size:30px;color:#fff;white-space:normal;
+    font-family:'Mochiy Pop One',sans-serif;font-size:min(30px,6.4vw);color:#fff;white-space:normal;line-height:1.3;
     width:max-content;max-width:92vw;padding:14px 24px;border-radius:24px;background:rgba(10,0,30,.8);border:3px solid var(--gold);
     box-shadow:0 0 30px rgba(245,200,66,.6);
     transform:translate(-50%,-50%) scale(0);transition:transform .35s cubic-bezier(.175,.885,.32,1.275);
@@ -187,7 +187,13 @@
   .banner.super{color:#fff200;border-color:#fff200;background:rgba(120,0,0,.85);box-shadow:0 0 40px #ff0;animation:superShake .1s infinite;}
   @keyframes superShake{0%{margin-left:-3px;}50%{margin-left:3px;}100%{margin-left:-3px;}}
   .banner.stage{background:rgba(0,0,0,.7);}
-  .banner .sub{display:block;font-family:'Kosugi Maru',sans-serif;font-size:14px;margin-top:6px;color:rgba(255,255,255,.9);white-space:normal;}
+  .banner .sub{display:block;font-family:'Kosugi Maru',sans-serif;font-size:min(14px,3.6vw);margin-top:6px;color:rgba(255,255,255,.9);line-height:1.6;}
+  .banner .sub .use{display:block;margin-top:4px;color:#ffe066;}
+  .banner .sub.stage-name{font-family:'Mochiy Pop One',sans-serif;font-size:min(24px,6vw);color:var(--gold);margin-top:2px;}
+  /* 改行位置は文言側の\nで決め、各行の途中では改行しない */
+  .banner .ln{display:block;white-space:nowrap;}
+  /* 通常の文章：単語（スペース区切り）の途中で改行しない。入りきらない時だけ折り返す */
+  .message,.start-rules,.goal-sub,.ask-sub,.ask-title,.record{word-break:keep-all;overflow-wrap:anywhere;line-break:strict;}
   .banner .big-icon{display:block;font-size:56px;line-height:1.2;}
   .ask{position:fixed;inset:0;z-index:160;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.55);padding:20px;}
   .ask.show{display:flex;}
@@ -339,6 +345,15 @@
   @keyframes pulseBtn{from{transform:scale(1);}to{transform:scale(1.08);}}
   .start-btn:active{transform:scale(.95) !important;}
   .settings{display:flex;gap:10px;}
+  /* 幅の狭い端末：見出しを1行に収め、宝の地図をはみ出させない */
+  .title{white-space:nowrap;}
+  @media (max-width:370px){
+    .title{font-size:min(22px,5.4vw);letter-spacing:1px;}
+    .icon-btn{width:36px;height:36px;font-size:16px;}
+    .map{gap:2px;padding:5px 7px;}
+    .map .node{width:17px;height:17px;font-size:9px;}
+    .map .stg{font-size:11px;margin:0;}
+  }
   .toggle{
     padding:7px 14px;border-radius:20px;border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.08);
     color:#fff;font-family:'Kosugi Maru',sans-serif;font-size:13px;cursor:pointer;-webkit-appearance:none;
@@ -516,6 +531,7 @@ const TX = {
   soundOn:['🔊 音 ON','🔊 おと ON'], soundOff:['🔇 音 OFF','🔇 おと OFF'],
   kanaOn:['あ ひらがな ON','あ ひらがな ON'], kanaOff:['あ ひらがな OFF','あ ひらがな OFF'],
   stage:['ステージ{0}：{1}','ステージ{0}：{1}'],
+  stageNo:['ステージ{0}','ステージ{0}'],
   sn0:['草原','そうげん'], sn1:['洞窟','どうくつ'], sn2:['海底','かいてい'], sn3:['宇宙','うちゅう'],
   partyLabel:['みんなでモード','みんなで モード'],
   watch:['宝の箱をよく見てね！','たからの はこを よく みてね！'],
@@ -525,22 +541,22 @@ const TX = {
   which:['宝はどれ？タップ！','たからは どれ？ タップ！'],
   opening:['ドキドキ…','ドキドキ…'],
   safe:['セーフ！','セーフ！'],
-  shieldRetry:['盾がまもってくれた！','たてが まもって くれた！'],
+  shieldRetry:['盾が\nまもってくれた！','たてが\nまもって くれた！'],
   shieldRetrySub:['もう一回チャレンジ！','もう いっかい チャレンジ！'],
   superFast:['⚡ 超高速！ ⚡','⚡ ちょうこうそく！ ⚡'],
   itemGet:['アイテムゲット！','アイテム ゲット！'],
   i_shield:['盾：ハズレても1回だけやり直せる','たて：ハズレても 1かいだけ やりなおせる'],
   i_peek:['のぞき見：箱が透けて中身が見える','のぞきみ：はこが すけて なかみが みえる'],
   i_slow:['スロー：入れかえがゆっくりになる','スロー：いれかえが ゆっくりに なる'],
-  u_shield:['ハズレたときに自動で発動するよ','ハズレたときに じどうで はつどう するよ'],
-  u_peek:['「宝はどれ？」のときに下のボタンをタップ','「たからは どれ？」の ときに したの ボタンを タップ'],
-  u_slow:['シャッフルの前に「つかう？」と聞かれるよ','シャッフルの まえに 「つかう？」と きかれるよ'],
+  u_shield:['ハズレたときに\n自動で発動するよ','ハズレたときに\nじどうで はつどう するよ'],
+  u_peek:['「宝はどれ？」のときに\n下のボタンをタップ','「たからは どれ？」の ときに\nしたの ボタンを タップ'],
+  u_slow:['シャッフルの前に\n「つかう？」と聞かれるよ','シャッフルの まえに\n「つかう？」と きかれるよ'],
   use_ask:['前に聞く','まえに きく'],
   askSlow:['🐢 スローをつかう？','🐢 スローを つかう？'],
   askSlowSub:['このシャッフルがゆっくりになるよ（のこり{0}こ）','この シャッフルが ゆっくりに なるよ（のこり {0}こ）'],
   askYes:['つかう','つかう'], askNo:['つかわない','つかわない'],
   ready:['よーく見てね…','よーく みてね…'],
-  itemFull:['アイテムはぜんぶ持ってるよ！','アイテムは ぜんぶ もってるよ！'],
+  itemFull:['アイテムは\nぜんぶ持ってるよ！','アイテムは\nぜんぶ もってるよ！'],
   n_shield:['盾','たて'], n_peek:['のぞき見','のぞきみ'], n_slow:['スロー','スロー'], n_hint:['ヒント','ヒント'],
   use_auto:['自動','じどう'], use_tap:['タップ','タップ'],
   g_peek:['👀をタップすると箱が透けて見えるよ！','👀を タップすると はこが すけて みえるよ！'],
@@ -893,7 +909,7 @@ async function normalShuffle(st, slow, id) {
     G.superUsed = true;
     flash();
     soundAlarm();
-    await showBanner(t('superFast'), 'super', 1400);
+    await showBanner(L(t('superFast')), 'super', 1400);
     if (!alive(id)) return;
     k += 4;
     d = Math.max(110, Math.round(d / 3));
@@ -912,6 +928,11 @@ async function normalShuffle(st, slow, id) {
 function flash() {
   const f = $('flash');
   f.classList.remove('on'); void f.offsetWidth; f.classList.add('on');
+}
+// 文言を行ごとの<span>にする（\nで改行、行の途中では改行しない）
+function L(s, cls) {
+  const esc = v => String(v).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  return String(s).split('\n').map(x => `<span class="ln${cls ? ' ' + cls : ''}">${esc(x)}</span>`).join('');
 }
 async function showBanner(html, cls, ms) {
   const b = $('banner');
@@ -1231,7 +1252,7 @@ async function onBoxTap(b) {
     renderItems();
     soundItem();
     await sleep(700); if (!alive(id)) return;
-    await showBanner(`<span class="big-icon">🛡</span>${t('shieldRetry')}<span class="sub">${t('shieldRetrySub')}</span>`, '', 1900);
+    await showBanner(`<span class="big-icon">🛡</span>${L(t('shieldRetry'))}<span class="sub">${L(t('shieldRetrySub'))}</span>`, '', 1900);
     if (!alive(id)) return;
     startRound();
   } else {
@@ -1261,9 +1282,9 @@ async function afterWin(id) {
       G.items[it] = 1;
       renderItems();
       soundItem();
-      await showBanner(`<span class="big-icon">${ITEM_ICON[it]}</span>${t('itemGet')}<span class="sub">${t('i_' + it)}<br>👉 ${t('u_' + it)}</span>`, '', 3000);
+      await showBanner(`<span class="big-icon">${ITEM_ICON[it]}</span>${L(t('itemGet'))}<span class="sub">${L(t('i_' + it))}<span class="use">${L('👉 ' + t('u_' + it))}</span></span>`, '', 3000);
     } else {
-      await showBanner(`<span class="big-icon">🎒</span>${t('itemFull')}`, '', 1800);
+      await showBanner(`<span class="big-icon">🎒</span>${L(t('itemFull'))}`, '', 1800);
     }
     if (!alive(id)) return;
     await changeStage(stageOf(G.round), id);
@@ -1284,7 +1305,7 @@ async function changeStage(st, id) {
   resetBoxes();
   renderStageLabel(); renderMap();
   c.classList.remove('on');
-  await showBanner(`${STAGES[st].icon} ${t('stage', st + 1, t('sn' + st))}`, 'stage', 1400);
+  await showBanner(`<span class="big-icon">${STAGES[st].icon}</span>${L(t('stageNo', st + 1))}<span class="sub stage-name">${L(t('sn' + st))}</span>`, 'stage', 1600);
 }
 
 function useItem(key) {
